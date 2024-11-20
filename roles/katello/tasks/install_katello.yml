@@ -1,0 +1,9 @@
+- name: Run Katello installer
+  command: foreman-installer --scenario katello
+  register: katello_installation
+  ignore_errors: yes
+
+- name: Fail if Katello installation fails
+  fail:
+    msg: "Katello installation failed. Check logs for details."
+  when: katello_installation.rc != 0

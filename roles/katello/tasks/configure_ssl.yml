@@ -1,0 +1,14 @@
+- name: Copy SSL certificates to Katello
+  copy:
+    src: "/path/to/ssl/{{ item }}"
+    dest: "/etc/foreman/{{ item }}"
+  loop:
+    - server.crt
+    - server.key
+    - ca.crt
+
+- name: Configure Katello for SSL
+  command: foreman-installer --scenario katello \
+            --certs-server-cert /etc/foreman/server.crt \
+            --certs-server-key /etc/foreman/server.key \
+            --certs-server-ca-cert /etc/foreman/ca.crt

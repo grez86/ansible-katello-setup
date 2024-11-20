@@ -1,0 +1,29 @@
+- name: Install EPEL release and required system packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - epel-release
+    - yum-utils
+    - python3-pip
+    - katello-repos
+    - foreman-installer
+    - postgresql-server
+    - postgresql-contrib
+    - wget
+    - git
+
+- name: Initialize PostgreSQL database
+  command: "/usr/bin/postgresql-setup initdb"
+
+- name: Start and enable PostgreSQL service
+  systemd:
+    name: postgresql
+    state: started
+    enabled: true
+
+- name: Install and enable HTTPD
+  yum:
+    name: httpd
+    state: present
+  notify: restart_httpd

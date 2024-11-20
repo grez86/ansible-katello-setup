@@ -1,0 +1,29 @@
+- name: Install Foreman Ansible Modules and Dependencies
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Ensure pip is installed
+      yum:
+        name: python3-pip
+        state: present
+
+    - name: Install required Python libraries
+      pip:
+        name:
+          - requests
+          - apypie
+        executable: pip3
+
+    - name: Install the Foreman Ansible collection
+      ansible.builtin.command:
+        cmd: ansible-galaxy collection install theforeman.foreman
+        creates: ~/.ansible/collections/ansible_collections/theforeman/foreman
+
+    - name: Verify Foreman Ansible Collection installation
+      ansible.builtin.command:
+        cmd: ansible-galaxy collection list
+      register: collection_list
+
+    - name: Display installed collections
+      debug:
+        var: collection_list.stdout_lines

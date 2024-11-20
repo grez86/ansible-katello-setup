@@ -1,0 +1,11 @@
+foreman_username: "admin"
+foreman_password: "your_password"
+foreman_server_url: "https://localhost"
+foreman_validate_certs: false
+organization: "Default_Organization"
+product_name: "Custom_Product"
+repositories:
+  - name: "CentOS_Base"
+    url: "http://mirror.centos.org/centos/7/os/x86_64/"
+  - name: "EPEL"
+    url: "https://dl.fedoraproject.org/pub/epel/7/x86_64/"
