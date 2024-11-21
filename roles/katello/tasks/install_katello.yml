@@ -1,7 +1,14 @@
-- name: Run Katello installer
-  command: foreman-installer --scenario katello
+- name: Run Katello installer with customized options
+  command:
+    cmd: >
+      foreman-installer --scenario katello
+      --foreman-proxy-puppet false
+      --foreman-proxy-tftp false
+      --foreman-proxy-dhcp false
+      --foreman-proxy-dns false
   register: katello_installation
   ignore_errors: yes
+
 
 - name: Fail if Katello installation fails
   fail:
