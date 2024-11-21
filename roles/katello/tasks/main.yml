@@ -1,8 +1,8 @@
 - name: Install system dependencies
   include_tasks: install_dependencies.yml
 
-- name: Configure SELinux for Katello
-  include_tasks: configure_selinux.yml
+# - name: Configure SELinux for Katello
+#   include_tasks: configure_selinux.yml
 
 - name: Install and configure Katello
   include_tasks: install_katello.yml

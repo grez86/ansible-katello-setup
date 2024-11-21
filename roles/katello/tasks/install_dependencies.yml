@@ -1,17 +1,49 @@
+- name: Add Foreman repository
+  yum_repository:
+    name: foreman
+    description: Foreman 3.12 Repository
+    baseurl: https://yum.theforeman.org/releases/3.12/el9/x86_64/
+    gpgcheck: yes
+    gpgkey: https://yum.theforeman.org/releases/3.12//RPM-GPG-KEY-foreman
+    enabled: yes
+
+- name: Add Katello repository
+  yum_repository:
+    name: katello
+    description: Katello 4.14 Repository
+    baseurl: https://yum.theforeman.org/katello/4.14/katello/el9/x86_64/
+    gpgcheck: yes
+    gpgkey: https://yum.theforeman.org/releases/3.12/RPM-GPG-KEY-foreman
+    enabled: yes
+
+- name: Add EPEL repository
+  yum:
+    name: epel-release
+    state: present
+
+- name: Add Puppet repository
+  yum_repository:
+    name: puppet
+    description: Puppet 7 Repository
+    baseurl: https://yum.puppet.com/puppet7/el/9/x86_64
+    gpgcheck: yes
+    gpgkey: https://yum.puppet.com/RPM-GPG-KEY-puppet
+    enabled: yes
+
+- name: Install Puppet agent and dependencies
+  yum:
+    name: puppet-agent
+    state: present
+
 - name: Install EPEL release and required system packages
   yum:
     name: "{{ item }}"
     state: present
   loop:
-    - epel-release
-    - yum-utils
-    - python3-pip
+    - foreman-release
     - katello-repos
-    - foreman-installer
-    - postgresql-server
-    - postgresql-contrib
-    - wget
-    - git
+    - puppet-release
+    - foreman-installer-katello
 
 - name: Initialize PostgreSQL database
   command: "/usr/bin/postgresql-setup initdb"
