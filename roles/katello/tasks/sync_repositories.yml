@@ -1,7 +1,7 @@
 - name: Create repositories in Katello
   theforeman.foreman.repository:
     username: "{{ foreman_username }}"
-    password: "{{ foreman_admin_password }}"
+    password: "{{ vault_foreman_admin_password }}"
     server_url: "{{ foreman_server_url }}"
     validate_certs: "{{ foreman_validate_certs }}"
     name: "{{ item.name }}"
@@ -15,7 +15,7 @@
 - name: Synchronize repositories
   theforeman.foreman.repository_sync:
     username: "{{ foreman_username }}"
-    password: "{{ foreman_admin_password }}"
+    password: "{{ vault_foreman_admin_password }}"
     server_url: "{{ foreman_server_url }}"
     validate_certs: "{{ foreman_validate_certs }}"
     name: "{{ item.name }}"
