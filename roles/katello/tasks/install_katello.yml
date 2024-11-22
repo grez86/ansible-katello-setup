@@ -38,4 +38,4 @@
 
 - name: Debug admin password
   debug:
-    msg: "The Katello admin password is {{ katello_admin_password }}"
+    msg: "The Katello admin password is {{ vault_katello_admin_password }}"
