@@ -24,7 +24,7 @@
 
 - name: Extract admin password from installer output
   set_fact:
-    foreman_admin_password: "{{ katello_installation.stdout | regex_search('Admin password: (.+)', '\\1') }}[0]"
+    foreman_admin_password: "{{ katello_installation.stdout | regex_search('Admin password: (.+)', '\\1') | first }}"
   when:
     - not katello_installed.stat.exists
     - katello_installation.rc == 0
@@ -37,7 +37,7 @@
 
 - name: Parse admin password
   set_fact:
-    foreman_admin_password: "{{ foreman_config.content | b64decode | regex_search('admin_password: (.+)', '\\1') }}[0]"
+    foreman_admin_password: "{{ foreman_config.content | b64decode | regex_search('admin_password: (.+)', '\\1') | first }}"
   when: katello_installed.stat.exists
 
 - name: Debug admin password
