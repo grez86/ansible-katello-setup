@@ -1,12 +1,7 @@
 - name: Check if Katello is already installed
-  command: foreman-maintain service status
-  register: katello_status
-  failed_when: false
-  changed_when: false
-
-- name: Determine if Katello is installed
-  set_fact:
-    katello_installed: "{{ katello_status.rc == 0 }}"
+  stat:
+    path: /etc/foreman-installer/scenarios.d/katello-answers.yaml
+  register: katello_installed
 
 - name: Run Katello installer with customized options
   command:
@@ -17,40 +12,34 @@
       --foreman-proxy-dhcp false
       --foreman-proxy-dns false
   register: katello_installation
-  when: not katello_installed
+  when: not katello_installed.stat.exists
   ignore_errors: yes
 
 - name: Fail if Katello installation fails
   fail:
     msg: "Katello installation failed. Check logs for details."
   when:
-    - not katello_installed
+    - not katello_installed.stat.exists
     - katello_installation.rc != 0
 
 - name: Extract admin password from installer output
   set_fact:
     foreman_admin_password: "{{ katello_installation.stdout | regex_search('Admin password: (.+)', '\\1') }}"
   when:
-    - not katello_installed
+    - not katello_installed.stat.exists
     - katello_installation.rc == 0
 
 - name: Get admin password from configuration file
   slurp:
     src: /etc/foreman-installer/scenarios.d/katello-answers.yaml
   register: foreman_config
-  when: katello_installed
+  when: katello_installed.stat.exists
 
 - name: Parse admin password
   set_fact:
     foreman_admin_password: "{{ foreman_config.content | b64decode | regex_search('admin_password: (.+)', '\\1') }}"
-  when: katello_installed
+  when: katello_installed.stat.exists
 
 - name: Debug admin password
   debug:
     msg: "The Foreman admin password is {{ foreman_admin_password }}"
-
-# - name: Save admin password to Ansible Vault
-#   copy:
-#     content: "foreman_admin_password: {{ foreman_admin_password }}"
-#     dest: /home/azureuser/ansible_vault.yml
-#   when: foreman_admin_password is defined
