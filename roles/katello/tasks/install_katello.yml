@@ -36,7 +36,7 @@
 
 - name: Get admin password from configuration file
   slurp:
-    src: /etc/foreman-installer/scenarios.d/katello-installer.yaml
+    src: /etc/foreman-installer/scenarios.d/katello-answers.yaml
   register: foreman_config
   when: katello_installed
 
