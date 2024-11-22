@@ -1,7 +1,12 @@
 - name: Check if Katello is already installed
-  stat:
-    path: /etc/foreman-installer/scenarios.d/katello-installer.yaml
-  register: katello_installed
+  command: foreman-maintain service status
+  register: katello_status
+  failed_when: false
+  changed_when: false
+
+- name: Determine if Katello is installed
+  set_fact:
+    katello_installed: "{{ katello_status.rc == 0 }}"
 
 - name: Run Katello installer with customized options
   command:
@@ -12,33 +17,33 @@
       --foreman-proxy-dhcp false
       --foreman-proxy-dns false
   register: katello_installation
-  when: not katello_installed.stat.exists
+  when: not katello_installed
   ignore_errors: yes
 
 - name: Fail if Katello installation fails
   fail:
     msg: "Katello installation failed. Check logs for details."
   when:
-    - not katello_installed.stat.exists
+    - not katello_installed
     - katello_installation.rc != 0
 
 - name: Extract admin password from installer output
   set_fact:
     foreman_admin_password: "{{ katello_installation.stdout | regex_search('Admin password: (.+)', '\\1') }}"
   when:
-    - not katello_installed.stat.exists
+    - not katello_installed
     - katello_installation.rc == 0
 
 - name: Get admin password from configuration file
   slurp:
     src: /etc/foreman-installer/scenarios.d/katello-installer.yaml
   register: foreman_config
-  when: katello_installed.stat.exists
+  when: katello_installed
 
 - name: Parse admin password
   set_fact:
     foreman_admin_password: "{{ foreman_config.content | b64decode | regex_search('admin_password: (.+)', '\\1') }}"
-  when: katello_installed.stat.exists
+  when: katello_installed
 
 - name: Debug admin password
   debug:
