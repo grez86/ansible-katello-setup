@@ -1,5 +1,5 @@
 - name: Setup Katello on localhost
-  hosts: katello
+  hosts: localhost
   become: yes
   roles:
     - katello
