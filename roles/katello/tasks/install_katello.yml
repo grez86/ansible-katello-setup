@@ -19,6 +19,7 @@
   command:
     cmd: >
       foreman-installer --scenario katello
+      --foreman-proxy-puppet false
       --foreman-proxy-tftp false
       --foreman-proxy-dhcp false
       --foreman-proxy-dns false
@@ -27,7 +28,6 @@
   register: katello_installation
   when: not katello_installed
   ignore_errors: yes
-#      --foreman-proxy-puppet false
 
 - name: Fail if Katello installation fails
   fail:
