@@ -24,7 +24,7 @@
       --foreman-proxy-dhcp false
       --foreman-proxy-dns false
       --foreman-initial-admin-username {{ foreman_username }}
-      --foreman-initial-admin-password "{{ vault_katello_admin_password }}"
+      --foreman-initial-admin-password "{{ vault_foreman_password }}"
   register: katello_installation
   when: not katello_installed
   ignore_errors: yes
@@ -38,4 +38,4 @@
 
 # - name: Debug admin password
 #   debug:
-#     msg: "The Katello admin password is {{ vault_katello_admin_password }}"
+#     msg: "The Katello admin password is {{ vault_foreman_password }}"
