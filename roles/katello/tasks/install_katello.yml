@@ -23,7 +23,7 @@
       --foreman-proxy-tftp false
       --foreman-proxy-dhcp false
       --foreman-proxy-dns false
-      --foreman-initial-admin-username admin
+      --foreman-initial-admin-username {{ foreman_username }}
       --foreman-initial-admin-password "{{ vault_katello_admin_password }}"
   register: katello_installation
   when: not katello_installed
@@ -36,6 +36,6 @@
     - not katello_installed
     - katello_installation.rc != 0
 
-- name: Debug admin password
-  debug:
-    msg: "The Katello admin password is {{ vault_katello_admin_password }}"
+# - name: Debug admin password
+#   debug:
+#     msg: "The Katello admin password is {{ vault_katello_admin_password }}"

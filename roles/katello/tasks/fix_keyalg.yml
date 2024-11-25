@@ -1,0 +1,16 @@
+# These tasks provide a workaround for a bug in the foreman-installer that causes issues with the keystore
+# generation process. For more details, see the discussion here:
+# https://community.theforeman.org/t/keytool-error-java-lang-exception-the-keyalg-option-must-be-specified/40247
+
+
+- name: Insert '-keyalg' in the genkey block of keytool
+  replace:
+    path: /usr/share/foreman-installer/modules/certs/lib/puppet_x/certs/provider/keystore.rb
+    backup: true
+    regexp: |-
+      ('-genkey',\n\s+'-storetype', 'pkcs12',\n\s+'-keystore', store,\n\s+'-storepass:file', resource\[:password_file\],\n\s+'-alias', temp_alias,\n\s+'-dname', "CN=#\{temp_alias\}",(\n\s+)'-J-Dcom.redhat.fips=false')(\n\s+\))
+    replace: |-
+      \g<1>,\g<2>'-keyalg', 'RSA'\g<3>
+    when: ansible_facts['os_family'] == 'RedHat' and
+          ansible_facts['distribution'] == 'AlmaLinux' and
+          ansible_facts['distribution_version'] is version('9.5', '>=')

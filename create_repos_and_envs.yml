@@ -1,0 +1,96 @@
+- name: Configure Foreman-Katello for Oracle Linux
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Create Lifecycle Environments
+      theforeman.foreman.foreman_lifecycle_environment:
+        username: "{{ foreman_username }}"
+        password: "{{ vault_foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        verify_ssl: "{{ foreman_verify_ssl }}"
+        name: "{{ item.name }}"
+        organization: "{{ organization }}"
+        prior: "{{ item.prior }}"
+      loop: "{{ lifecycle_environments }}"
+    
+    - name: Create Product for Oracle Linux
+      theforeman.foreman.foreman_product:
+        username: "{{ foreman_username }}"
+        password: "{{ vault_foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        verify_ssl: "{{ foreman_verify_ssl }}"
+        name: "{{ product_name }}"
+        organization: "{{ organization }}"
+
+    - name: Add Repositories
+      theforeman.foreman.foreman_repository:
+        username: "{{ foreman_username }}"
+        password: "{{ vault_foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        verify_ssl: "{{ foreman_verify_ssl }}"
+        name: "{{ item.name }}"
+        product: "{{ product_name }}"
+        organization: "{{ organization }}"
+        url: "{{ item.url }}"
+      loop: "{{ repositories }}"
+
+    - name: Synchronize Repositories
+      theforeman.foreman.foreman_repository_set:
+        username: "{{ foreman_username }}"
+        password: "{{ vault_foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        verify_ssl: "{{ foreman_verify_ssl }}"
+        product: "{{ product_name }}"
+        organization: "{{ organization }}"
+        repositories: "{{ repositories | map(attribute='name') | list }}"
+        state: present
+        sync: true
+
+    - name: Create Content Views
+      theforeman.foreman.foreman_content_view:
+        username: "{{ foreman_username }}"
+        password: "{{ vault_foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        verify_ssl: "{{ foreman_verify_ssl }}"
+        name: "{{ item.name }}"
+        organization: "{{ organization }}"
+        repositories: "{{ item.repositories }}"
+        state: present
+      loop: "{{ content_views }}"
+
+    - name: Publish Content Views
+      theforeman.foreman.foreman_content_view_version:
+        username: "{{ foreman_username }}"
+        password: "{{ vault_foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        verify_ssl: "{{ foreman_verify_ssl }}"
+        content_view: "{{ item.name }}"
+        organization: "{{ organization }}"
+        state: present
+      loop: "{{ content_views }}"
+
+    - name: Promote Content Views
+      theforeman.foreman.foreman_content_view_version:
+        username: "{{ foreman_username }}"
+        password: "{{ vault_foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        verify_ssl: "{{ foreman_verify_ssl }}"
+        content_view: "{{ item.name }}"
+        organization: "{{ organization }}"
+        state: present
+        lifecycle_environment: "{{ item.promote_to }}"
+      loop: "{{ content_views }}"
+
+    - name: Create Activation Keys
+      theforeman.foreman.foreman_activation_key:
+        username: "{{ foreman_username }}"
+        password: "{{ vault_foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        verify_ssl: "{{ foreman_verify_ssl }}"
+        name: "{{ item.name }}"
+        organization: "{{ organization }}"
+        lifecycle_environment: "{{ item.lifecycle_environment }}"
+        content_view: "{{ item.content_view }}"
+      loop: "{{ activation_keys }}"

@@ -1,5 +1,8 @@
 - name: Setup Katello on localhost
   hosts: localhost
   become: yes
+  vars_files:
+    - vars/vault.yml
+    - vars/foreman.yml
   roles:
     - katello

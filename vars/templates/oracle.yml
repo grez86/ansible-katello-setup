@@ -1,0 +1,38 @@
+organization: "Default Organization"
+product_name: "Oracle Linux"
+
+lifecycle_environments:
+  - name: "Production"
+    prior: "Library"
+  - name: "Development"
+    prior: "Production"
+
+repositories:
+  - name: "Oracle Linux 8 BaseOS"
+    url: "https://yum.oracle.com/repo/OracleLinux/OL8/baseos/latest/x86_64/"
+  - name: "Oracle Linux 8 Addons"
+    url: "https://yum.oracle.com/repo/OracleLinux/OL8/addons/latest/x86_64/"
+  - name: "Oracle Linux 9 BaseOS"
+    url: "https://yum.oracle.com/repo/OracleLinux/OL9/baseos/latest/x86_64/"
+  - name: "Oracle Linux 9 Addons"
+    url: "https://yum.oracle.com/repo/OracleLinux/OL9/addons/latest/x86_64/"
+
+content_views:
+  - name: "Oracle Linux 8 Content View"
+    repositories:
+      - "Oracle Linux 8 BaseOS"
+      - "Oracle Linux 8 Addons"
+    promote_to: "Development"
+  - name: "Oracle Linux 9 Content View"
+    repositories:
+      - "Oracle Linux 9 BaseOS"
+      - "Oracle Linux 9 Addons"
+    promote_to: "Development"
+
+activation_keys:
+  - name: "Oracle Linux 8 Dev Key"
+    lifecycle_environment: "Development"
+    content_view: "Oracle Linux 8 Content View"
+  - name: "Oracle Linux 9 Dev Key"
+    lifecycle_environment: "Development"
+    content_view: "Oracle Linux 9 Content View"
