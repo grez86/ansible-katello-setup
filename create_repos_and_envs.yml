@@ -47,8 +47,6 @@
         product: "{{ product_name }}"
         organization: "{{ organization }}"
         repository: "{{ item.name }}"
-        state: present
-        sync: true
       loop: "{{ repositories }}"
 
     - name: Create Content Views
