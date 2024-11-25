@@ -61,7 +61,7 @@
       loop: "{{ content_views }}"
 
     - name: Publish Content Views
-      theforeman.foreman.foreman_content_view_version:
+      theforeman.foreman.content_view_version:
         username: "{{ foreman_username }}"
         password: "{{ vault_foreman_password }}"
         server_url: "{{ foreman_server_url }}"
