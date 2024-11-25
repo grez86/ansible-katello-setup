@@ -1,4 +1,4 @@
 foreman_username: "admin"
 # katello_admin_password - replaced by vault_katello_admin_password and stored in vault.yml
 foreman_server_url: "https://localhost"
-foreman_verify_ssl: false
+foreman_validate_certs: false
