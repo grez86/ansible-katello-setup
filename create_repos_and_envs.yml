@@ -46,9 +46,10 @@
         validate_certs: "{{ foreman_validate_certs }}"
         product: "{{ product_name }}"
         organization: "{{ organization }}"
-        repositories: "{{ repositories | map(attribute='name') | list }}"
+        repository: "{{ item.name }}"
         state: present
         sync: true
+      loop: "{{ repositories }}"
 
     - name: Create Content Views
       theforeman.foreman.content_view:
