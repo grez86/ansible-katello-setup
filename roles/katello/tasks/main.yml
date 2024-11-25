@@ -2,7 +2,7 @@
   include_tasks: install_dependencies.yml
 
 - name: Fix Keyalg issue
-  include_tasks: fix_keylag.yml
+  include_tasks: fix_keyalg.yml
 
 - name: Install and configure Katello
   include_tasks: install_katello.yml
