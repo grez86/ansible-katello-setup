@@ -12,13 +12,13 @@ repositories:
     url: "https://yum.oracle.com/repo/OracleLinux/OL8/baseos/latest/x86_64/"
     content_type: "yum"
   - name: "Oracle Linux 8 Addons"
-    url: "https://yum.oracle.com/repo/OracleLinux/OL8/addons/latest/x86_64/"
+    url: "https://yum.oracle.com/repo/OracleLinux/OL8/addons/x86_64/"
     content_type: "yum"
   - name: "Oracle Linux 9 BaseOS"
     url: "https://yum.oracle.com/repo/OracleLinux/OL9/baseos/latest/x86_64/"
     content_type: "yum"
   - name: "Oracle Linux 9 Addons"
-    url: "https://yum.oracle.com/repo/OracleLinux/OL9/addons/latest/x86_64/"
+    url: "https://yum.oracle.com/repo/OracleLinux/OL9/addons/x86_64/"
     content_type: "yum"
 
 content_views:

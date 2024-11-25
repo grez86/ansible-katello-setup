@@ -7,6 +7,9 @@
 - name: Install and configure Katello
   include_tasks: install_katello.yml
 
+- name: Configure firewall
+  include_tasks: configure_firewall.yml
+
 # - name: Recreate Candlepin KeyStore
 #   include_tasks: recreate_candlepin_keystore.yml
 

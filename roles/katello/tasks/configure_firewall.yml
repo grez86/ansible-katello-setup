@@ -1,0 +1,9 @@
+- name: Open firewall for HTTPS
+  ansible.builtin.command:
+    cmd: "firewall-cmd --permanent --add-service=https"
+  become: true
+
+- name: Reload firewall to apply changes
+  ansible.builtin.command:
+    cmd: "firewall-cmd --reload"
+  become: true
