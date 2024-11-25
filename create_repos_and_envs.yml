@@ -1,6 +1,9 @@
 - name: Configure Foreman-Katello for Oracle Linux
   hosts: localhost
   gather_facts: false
+  vars_files:
+    - vars/vault.yml
+    - vars/foreman.yml
   tasks:
     - name: Create Lifecycle Environments
       theforeman.foreman.lifecycle_environment:
