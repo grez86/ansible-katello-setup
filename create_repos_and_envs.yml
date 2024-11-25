@@ -5,7 +5,7 @@
     - vars.yml
   tasks:
     - name: Create Lifecycle Environments
-      theforeman.foreman.foreman_lifecycle_environment:
+      theforeman.foreman.lifecycle_environment:
         username: "{{ foreman_username }}"
         password: "{{ vault_foreman_password }}"
         server_url: "{{ foreman_server_url }}"
@@ -16,7 +16,7 @@
       loop: "{{ lifecycle_environments }}"
     
     - name: Create Product for Oracle Linux
-      theforeman.foreman.foreman_product:
+      theforeman.foreman.product:
         username: "{{ foreman_username }}"
         password: "{{ vault_foreman_password }}"
         server_url: "{{ foreman_server_url }}"
@@ -25,7 +25,7 @@
         organization: "{{ organization }}"
 
     - name: Add Repositories
-      theforeman.foreman.foreman_repository:
+      theforeman.foreman.repository:
         username: "{{ foreman_username }}"
         password: "{{ vault_foreman_password }}"
         server_url: "{{ foreman_server_url }}"
@@ -37,7 +37,7 @@
       loop: "{{ repositories }}"
 
     - name: Synchronize Repositories
-      theforeman.foreman.foreman_repository_set:
+      theforeman.foreman.repository_sync:
         username: "{{ foreman_username }}"
         password: "{{ vault_foreman_password }}"
         server_url: "{{ foreman_server_url }}"
@@ -49,7 +49,7 @@
         sync: true
 
     - name: Create Content Views
-      theforeman.foreman.foreman_content_view:
+      theforeman.foreman.content_view:
         username: "{{ foreman_username }}"
         password: "{{ vault_foreman_password }}"
         server_url: "{{ foreman_server_url }}"
@@ -72,7 +72,7 @@
       loop: "{{ content_views }}"
 
     - name: Promote Content Views
-      theforeman.foreman.foreman_content_view_version:
+      theforeman.foreman.content_view_version:
         username: "{{ foreman_username }}"
         password: "{{ vault_foreman_password }}"
         server_url: "{{ foreman_server_url }}"
@@ -84,7 +84,7 @@
       loop: "{{ content_views }}"
 
     - name: Create Activation Keys
-      theforeman.foreman.foreman_activation_key:
+      theforeman.foreman.activation_key:
         username: "{{ foreman_username }}"
         password: "{{ vault_foreman_password }}"
         server_url: "{{ foreman_server_url }}"
