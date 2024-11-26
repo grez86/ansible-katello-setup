@@ -24,13 +24,17 @@ repositories:
 content_views:
   - name: "Oracle Linux 8 Content View"
     repositories:
-      - "Oracle Linux 8 BaseOS"
-      - "Oracle Linux 8 Addons"
+      - name: "Oracle Linux 8 BaseOS"
+        product: "Oracle Linux"
+      - name: "Oracle Linux 8 Addons"
+        product: "Oracle Linux"
     promote_to: "Development"
   - name: "Oracle Linux 9 Content View"
     repositories:
-      - "Oracle Linux 9 BaseOS"
-      - "Oracle Linux 9 Addons"
+      - name: "Oracle Linux 9 BaseOS"
+        product: "Oracle Linux"
+      - name: "Oracle Linux 9 Addons"
+        product: "Oracle Linux"
     promote_to: "Development"
 
 activation_keys:
