@@ -81,7 +81,7 @@
         content_view: "{{ item.name }}"
         organization: "{{ organization }}"
         state: present
-        lifecycle_environment: "{{ item.promote_to }}"
+        lifecycle_environments: "{{ item.promote_to }}"
       loop: "{{ content_views }}"
 
     - name: Create Activation Keys
