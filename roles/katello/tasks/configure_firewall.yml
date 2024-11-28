@@ -1,9 +1,17 @@
+- name: Check if firewalld is installed
+  ansible.builtin.command:
+    cmd: "rpm -q firewalld"
+  register: firewalld_installed
+  ignore_errors: true
+
 - name: Open firewall for HTTPS
   ansible.builtin.command:
     cmd: "firewall-cmd --permanent --add-service=https"
   become: true
+  when: firewalld_installed.rc == 0  # Run only if firewalld is installed
 
 - name: Reload firewall to apply changes
   ansible.builtin.command:
     cmd: "firewall-cmd --reload"
   become: true
+  when: firewalld_installed.rc == 0  # Run only if firewalld is installed
