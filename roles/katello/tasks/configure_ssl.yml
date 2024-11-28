@@ -53,6 +53,7 @@
     katello-change-hostname {{ hostname }}
     -u {{ foreman_username }}
     -p {{ vault_foreman_password }}
+    -y
 
 - name: Run foreman-installer to configure Katello with SSL
   command: >
