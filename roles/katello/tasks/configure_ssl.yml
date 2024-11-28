@@ -1,5 +1,5 @@
 - name: Set FQDN, IP, and SSL-related variables
-  vars:
+  set_vars:
     host_ip: "{{ ansible_default_ipv4.address }}"
     hostname: "{{ foreman_server_url | urlsplit('hostname') }}"
     ssl_dir: "{{ playbook_dir | dirname }}/ssl_certs"
