@@ -16,11 +16,6 @@
     gpgkey: https://yum.theforeman.org/releases/3.12/RPM-GPG-KEY-foreman
     enabled: yes
 
-- name: Add EPEL repository
-  yum:
-    name: epel-release
-    state: present
-
 - name: Add Puppet repository
   yum_repository:
     name: puppet

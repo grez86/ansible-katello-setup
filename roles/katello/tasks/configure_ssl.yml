@@ -1,14 +1,63 @@
-- name: Copy SSL certificates to Katello
-  copy:
-    src: "/path/to/ssl/{{ item }}"
-    dest: "/etc/foreman/{{ item }}"
-  loop:
-    - server.crt
-    - server.key
-    - ca.crt
+- name: Set FQDN, IP, and SSL-related variables
+  vars:
+    host_ip: "{{ ansible_default_ipv4.address }}"
+    hostname: "{{ foreman_server_url | urlsplit('hostname') }}"
+    ssl_dir: "{{ playbook_dir | dirname }}/ssl_certs"
+    cert_files:
+      - certificate.crt
+      - private.key
+      - ca-bundle.crt
 
-- name: Configure Katello for SSL
-  command: foreman-installer --scenario katello \
-            --certs-server-cert /etc/foreman/server.crt \
-            --certs-server-key /etc/foreman/server.key \
-            --certs-server-ca-cert /etc/foreman/ca.crt
+- name: Verify SSL directory exists
+  stat:
+    path: "{{ ssl_dir }}"
+  register: ssl_dir_exists
+
+- name: Check if all SSL certificate files exist
+  stat:
+    path: "{{ ssl_dir }}/{{ item }}"
+  with_items: "{{ cert_files }}"
+  register: cert_file_check
+  when: ssl_dir_exists.stat.exists
+
+- name: Determine if all required SSL files are present
+  set_fact:
+    all_cert_files_exist: "{{ ssl_dir_exists.stat.exists and (cert_file_check.results | selectattr('stat.exists', 'equalto', true) | list | length == cert_files | length) }}"
+
+- name: Fail if SSL certificate files are missing
+  fail:
+    msg: "One or more SSL certificate files are missing in {{ ssl_dir }}. Required files: {{ cert_files }}"
+  when: not all_cert_files_exist
+
+- name: Copy SSL certificates to /etc/ssl/certs with FQDN-specific names
+  copy:
+    src: "{{ ssl_dir }}/{{ item }}"
+    dest: "/etc/ssl/certs/{{ hostname }}-{{ item }}"
+  with_items: "{{ cert_files }}"
+
+- name: Check if FQDN resolves to the VM IP
+  shell: "host {{ hostname }} | grep 'has address' | awk '{print $NF}'"
+  register: fqdn_check
+  changed_when: false
+  failed_when: false
+
+- name: Append /etc/hosts if FQDN does not resolve
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ host_ip }} {{ hostname }}"
+    state: present
+  when: fqdn_check.stdout | trim != host_ip
+
+- name: Change Katello hostname
+  command: >
+    katello-change-hostname {{ hostname }}
+    -u {{ foreman_username }}
+    -p {{ vault_foreman_password }}
+
+- name: Run foreman-installer to configure Katello with SSL
+  command: >
+    foreman-installer --scenario katello
+    --certs-server-cert /etc/ssl/certs/{{ hostname }}-certificate.crt
+    --certs-server-key /etc/ssl/certs/{{ hostname }}-private.key
+    --certs-server-ca-cert /etc/ssl/certs/{{ hostname }}-ca-bundle.crt
+    --certs-node-fqdn "{{ hostname }}"

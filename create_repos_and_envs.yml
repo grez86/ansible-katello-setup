@@ -5,6 +5,25 @@
     - vars/vault.yml
     - vars/foreman.yml
   tasks:
+
+    - name: Validate Foreman URL is accessible
+      uri:
+        url: "{{ foreman_server_url }}"
+        method: GET
+        return_content: false
+        validate_certs: "{{ foreman_validate_certs }}"
+      register: foreman_url_check
+      failed_when:
+        - foreman_url_check.status not in [200, 301, 302]
+      retries: 3
+      delay: 5
+      until: foreman_url_check.status in [200, 301, 302]
+
+    - name: Fail if Foreman URL is not accessible
+      fail:
+        msg: "The Foreman URL {{ foreman_server_url }} is not accessible or invalid."
+      when: foreman_url_check.status not in [200, 301, 302]
+
     - name: Create Lifecycle Environments
       theforeman.foreman.lifecycle_environment:
         username: "{{ foreman_username }}"
@@ -69,20 +88,21 @@
         validate_certs: "{{ foreman_validate_certs }}"
         content_view: "{{ item.name }}"
         organization: "{{ organization }}"
+        version: "1.0"
         state: present
       loop: "{{ content_views }}"
 
-    - name: Promote Content Views
-      theforeman.foreman.content_view_version:
-        username: "{{ foreman_username }}"
-        password: "{{ vault_foreman_password }}"
-        server_url: "{{ foreman_server_url }}"
-        validate_certs: "{{ foreman_validate_certs }}"
-        content_view: "{{ item.name }}"
-        organization: "{{ organization }}"
-        state: present
-        lifecycle_environments: "{{ item.promote_to }}"
-      loop: "{{ content_views }}"
+    # - name: Promote Content Views
+    #   theforeman.foreman.content_view_version:
+    #     username: "{{ foreman_username }}"
+    #     password: "{{ vault_foreman_password }}"
+    #     server_url: "{{ foreman_server_url }}"
+    #     validate_certs: "{{ foreman_validate_certs }}"
+    #     content_view: "{{ item.name }}"
+    #     organization: "{{ organization }}"
+    #     state: present
+    #     lifecycle_environments: "{{ item.promote_to }}"
+    #   loop: "{{ content_views }}"
 
     - name: Create Activation Keys
       theforeman.foreman.activation_key:

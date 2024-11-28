@@ -10,8 +10,6 @@
 - name: Configure firewall
   include_tasks: configure_firewall.yml
 
-# - name: Recreate Candlepin KeyStore
-#   include_tasks: recreate_candlepin_keystore.yml
-
-# - name: Configure SSL certificates
-#   include_tasks: configure_ssl.yml
+- name: Configure SSL certificates
+  include_tasks: configure_ssl.yml
+  when: foreman_server_url != "https://localhost"
