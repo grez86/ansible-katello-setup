@@ -39,7 +39,7 @@
         creates: ../gpg_keys/pubring.kbx
 
     - name: Export GPG key to a file
-      shell: gpg --homedir --armor --export "Katello GPG Key"  --passphrase {{ vault_gpg_passphrase }}> ../gpg_keys/katello-gpg-key.asc
+      shell: gpg --homedir ../gpg_keys --armor --export "Katello GPG Key"  --passphrase {{ vault_gpg_passphrase }} > ../gpg_keys/katello-gpg-key.asc
       args:
         creates: ../gpg_keys/katello-gpg-key.asc
 
