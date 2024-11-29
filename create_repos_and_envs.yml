@@ -115,3 +115,45 @@
         lifecycle_environment: "{{ item.lifecycle_environment }}"
         content_view: "{{ item.content_view }}"
       loop: "{{ activation_keys }}"
+
+    - name: Generate GPG key pair in parent directory
+      shell: |
+        mkdir -p ../gpg_keys
+        gpg --batch --homedir ../gpg_keys --generate-key <<EOF
+        Key-Type: default
+        Subkey-Type: default
+        Name-Real: Katello GPG Key
+        Name-Email: katello@example.com
+        Expire-Date: 0
+        %commit
+        EOF
+      args:
+        creates: ../gpg_keys/pubring.kbx
+
+    - name: Export GPG key to a file
+      shell: gpg --armor --export "Katello GPG Key" > ../gpg_keys/katello-gpg-key.asc
+      args:
+        creates: ../gpg_keys/katello-gpg-key.asc
+
+    - name: Upload GPG key as Content Credential
+      foreman_content_credential:
+        username: "{{ foreman_username }}"
+        password: "{{ vault_foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        validate_certs: "{{ foreman_validate_certs }}"
+        name: "Katello GPG Key"
+        organization: "{{ organization }}"
+        content: "{{ lookup('file', '../gpg_keys/katello-gpg-key.asc') }}"
+        content_type: "gpg_key"
+
+    - name: Update repository with GPG key
+      foreman_repository:
+        username: "{{ foreman_username }}"
+        password: "{{ vault_foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        validate_certs: "{{ foreman_validate_certs }}"
+        name: "{{ item.name }}"
+        organization: "{{ organization }}"
+        product: "{{ product_name }}"
+        gpg_key: "Katello GPG Key"
+      loop: "{{ repositories }}"
