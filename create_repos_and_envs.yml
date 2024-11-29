@@ -92,17 +92,17 @@
         state: present
       loop: "{{ content_views }}"
 
-    # - name: Promote Content Views
-    #   theforeman.foreman.content_view_version:
-    #     username: "{{ foreman_username }}"
-    #     password: "{{ vault_foreman_password }}"
-    #     server_url: "{{ foreman_server_url }}"
-    #     validate_certs: "{{ foreman_validate_certs }}"
-    #     content_view: "{{ item.name }}"
-    #     organization: "{{ organization }}"
-    #     state: present
-    #     lifecycle_environments: "{{ item.promote_to }}"
-    #   loop: "{{ content_views }}"
+    - name: Promote Content Views
+      theforeman.foreman.content_view_version:
+        username: "{{ foreman_username }}"
+        password: "{{ vault_foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        validate_certs: "{{ foreman_validate_certs }}"
+        content_view: "{{ item.name }}"
+        organization: "{{ organization }}"
+        state: present
+        lifecycle_environments: "{{ item.promote_to }}"
+      loop: "{{ content_views }}"
 
     - name: Create Activation Keys
       theforeman.foreman.activation_key:
