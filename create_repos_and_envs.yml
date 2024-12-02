@@ -65,7 +65,7 @@
         prior: "{{ item.prior }}"
       loop: "{{ lifecycle_environments }}"
     
-    - name: Create Product for Oracle Linux
+    - name: Create Product
       theforeman.foreman.product:
         username: "{{ foreman_username }}"
         password: "{{ vault_foreman_password }}"
@@ -108,6 +108,7 @@
         name: "{{ item.name }}"
         organization: "{{ organization }}"
         repositories: "{{ item.repositories }}"
+        solve_dependencies: true
         state: present
       loop: "{{ content_views }}"
 
